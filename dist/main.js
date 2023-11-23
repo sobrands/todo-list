@@ -1,0 +1,2 @@
+(()=>{"use strict";!function(){const e=document.getElementById("main");console.log(e);const t=document.createElement("div");t.setAttribute("id","banner"),e.appendChild(t)}()})();
+//# sourceMappingURL=main.js.map
