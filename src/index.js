@@ -1,5 +1,6 @@
-import initialPage from './pages/InitialPage';
+import displayController from './modules/displayController';
 
-import './styles/page.css';
+import './styles/main.css';
+import './styles/navBar.css';
 
-initialPage();
+displayController.initialPage();
