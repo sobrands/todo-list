@@ -45,3 +45,8 @@
 .task-nav:active {
   background-color: rgba(0,0,0,0.4);
 }
+
+.active {
+  background-color: rgba(0,0,0,0.2);
+  border-radius: 8px;
+}

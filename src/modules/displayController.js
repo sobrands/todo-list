@@ -1,5 +1,6 @@
 const navHeadings = ['Inbox', 'Today', 'This Week'];
 const navIds = ['inbox', 'today', 'this-week'];
+let prevTaskNav;
 
 function createNavBar(nav) {
   const mainNav = document.createElement('div');
@@ -11,7 +12,7 @@ function createNavBar(nav) {
     const heading = document.createElement('button');
     heading.textContent = navHeadings[i];
     heading.setAttribute('id', navIds[i]);
-    heading.classList.add('task-nav');
+    heading.classList.add('task-nav', 'default-task');
     mainNav.appendChild(heading);
   }
 
@@ -24,6 +25,7 @@ function createNavBar(nav) {
 
   const addProjects = document.createElement('button');
   addProjects.classList.add('task-nav');
+  addProjects.setAttribute('id','add-proj');
   addProjects.textContent = '+ Add Project';
 
   projectNav.appendChild(projectsTitle);
@@ -31,6 +33,30 @@ function createNavBar(nav) {
 
   nav.appendChild(mainNav);
   nav.appendChild(projectNav);
+}
+
+function displayTasks(navElement) {
+  prevTaskNav.classList.remove('active');
+  navElement.classList.add('active');
+  prevTaskNav = navElement;
+}
+
+function addProject() {
+  console.log('adding project');
+}
+
+function addNavListeners(nav) {
+  const tabs = nav.querySelectorAll('button');
+  tabs.forEach(tab => {
+    tab.addEventListener('click', e => {
+      if (e.target.classList.contains('default-task')) {
+        displayTasks(e.target);
+      }
+      else if (e.target.id === 'add-proj') {
+        addProject();
+      }
+    });
+  });
 }
 
 function initialPage() {
@@ -56,6 +82,10 @@ function initialPage() {
   body.appendChild(contentBody);
 
   createNavBar(nav);
+  const inbox = document.querySelector('#inbox');
+  prevTaskNav = inbox;
+  displayTasks(inbox);
+  addNavListeners(nav);
 }
 
 export default {
