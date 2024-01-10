@@ -2,6 +2,50 @@ const navHeadings = ['Inbox', 'Today', 'This Week'];
 const navIds = ['inbox', 'today', 'this-week'];
 let prevTaskNav;
 
+function createProjForm() {
+  const projForm = document.createElement('form');
+  projForm.setAttribute('id', 'proj-form');
+
+  const inputContainer = document.createElement('div');
+  const nameInput = document.createElement('input');
+  const btnContainer = document.createElement('div');
+  const confirmBtn = document.createElement('button');
+  const cancelBtn = document.createElement('button');
+
+  inputContainer.setAttribute('id', 'name-input');
+  nameInput.setAttribute('id', 'name');
+  
+  btnContainer.setAttribute('id', 'action-btns');
+  confirmBtn.setAttribute('id', 'confirm');
+  cancelBtn.setAttribute('id', 'cancel');
+
+  confirmBtn.textContent = 'Enter';
+  cancelBtn.textContent = 'Cancel';
+
+  inputContainer.appendChild(nameInput);
+
+  btnContainer.appendChild(confirmBtn);
+  btnContainer.appendChild(cancelBtn);
+
+  const btns = btnContainer.querySelectorAll('button');
+
+  btns.forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.preventDefault();
+      projForm.style.display = 'none';
+      projForm.reset();
+      const addProjBtn = document.getElementById('add-proj');
+      addProjBtn.style.display = 'block';
+    });
+  });
+
+  projForm.appendChild(inputContainer);
+  projForm.appendChild(btnContainer);
+
+  const projectNav = document.getElementById('project-list');
+  projectNav.appendChild(projForm);
+}
+
 function createNavBar(nav) {
   const mainNav = document.createElement('div');
   const projectNav = document.createElement('div');
@@ -33,6 +77,8 @@ function createNavBar(nav) {
 
   nav.appendChild(mainNav);
   nav.appendChild(projectNav);
+
+  createProjForm();
 }
 
 function displayTasks(navElement) {
@@ -43,6 +89,10 @@ function displayTasks(navElement) {
 
 function addProject() {
   console.log('adding project');
+  const form = document.getElementById('proj-form');
+  const addProjBtn = document.getElementById('add-proj');
+  addProjBtn.style.display = 'none';
+  form.style.display = 'grid';
 }
 
 function addNavListeners(nav) {

@@ -18,8 +18,59 @@
   gap:2%;
 }
 
+#project-list #proj-form {
+  display: none;
+  grid-template-columns: 1fr;
+  gap: 20%;
+}
+
+#name-input input {
+  display: block;
+  border: none;
+  border-radius: 3px;
+  padding: 5px;
+  font-size: 1.1em;
+}
+
+#action-btns {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 5%;
+}
+
+#action-btns button {
+  font-size: 1.2em;
+  padding: 5px 15px;
+  border: none;
+  border-radius: 5px;
+  text-align: center;
+  flex-grow: 1;
+}
+
+#action-btns button:hover {
+  filter: saturate(0.6);
+  cursor: pointer;
+}
+
+#action-btns button:active {
+  filter: saturate(0.1);
+}
+
+#action-btns #confirm {
+  background-color: aquamarine;
+}
+
+#action-btns #cancel {
+  background-color: rgb(239, 120, 143);
+}
+
 #project-title {
   font-size: 1.6em;
+}
+
+#add-proj {
+  font-size: 1.15em;
 }
 
 .navigation {
