@@ -1,0 +1,30 @@
+#main-content {
+  width: 60%;
+  padding: 2% 0;
+  justify-self: center;
+}
+
+#main-title {
+  display: flex;
+  justify-content: space-between;
+
+}
+
+#main-title button {
+  border: 0;
+  background-color: white;
+  padding: 8px;
+  font-weight: bold;
+  font-size: 0.5em;
+}
+
+#add-task:hover {
+  background-color: rgba(0,0,0,0.2);
+  border-radius: 8px;
+
+  cursor: pointer;
+}
+
+#add-task:active {
+  background-color: rgba(0,0,0,0.4);
+}

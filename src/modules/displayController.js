@@ -1,8 +1,29 @@
+import ToDoList from './TodoList';
+
 const navHeadings = ['Inbox', 'Today', 'This Week'];
 const navIds = ['inbox', 'today', 'this-week'];
 let prevTaskNav;
+const toDoList = new ToDoList();
 
-function createProjForm() {
+
+function refreshProjectNav() {
+  const projList = document.getElementById('project-list');
+  const projects = toDoList.projects;
+
+  projList.textContent = '';
+  for (const proj of projects) {
+    const project = document.createElement('button');
+    project.textContent = proj.name;
+    project.classList.add('project');
+    project.classList.add('task-nav');
+    project.addEventListener('click', e => {
+      displayTasks(e.target);
+    })
+    projList.appendChild(project);
+  }
+}
+
+function createProjForm(projNav) {
   const projForm = document.createElement('form');
   projForm.setAttribute('id', 'proj-form');
 
@@ -14,7 +35,7 @@ function createProjForm() {
 
   inputContainer.setAttribute('id', 'name-input');
   nameInput.setAttribute('id', 'name');
-  
+
   btnContainer.setAttribute('id', 'action-btns');
   confirmBtn.setAttribute('id', 'confirm');
   cancelBtn.setAttribute('id', 'cancel');
@@ -32,6 +53,10 @@ function createProjForm() {
   btns.forEach(btn => {
     btn.addEventListener('click', e => {
       e.preventDefault();
+      if (e.target.id === 'confirm' && nameInput.value !== '') {
+        toDoList.addProj(nameInput.value);
+        refreshProjectNav();
+      }
       projForm.style.display = 'none';
       projForm.reset();
       const addProjBtn = document.getElementById('add-proj');
@@ -42,8 +67,7 @@ function createProjForm() {
   projForm.appendChild(inputContainer);
   projForm.appendChild(btnContainer);
 
-  const projectNav = document.getElementById('project-list');
-  projectNav.appendChild(projForm);
+  projNav.appendChild(projForm);
 }
 
 function createNavBar(nav) {
@@ -60,7 +84,7 @@ function createNavBar(nav) {
     mainNav.appendChild(heading);
   }
 
-  projectNav.setAttribute('id', 'project-list');
+  projectNav.setAttribute('id', 'project');
   projectNav.classList.add('navigation');
   
   const projectsTitle = document.createElement('h3');
@@ -72,19 +96,54 @@ function createNavBar(nav) {
   addProjects.setAttribute('id','add-proj');
   addProjects.textContent = '+ Add Project';
 
+  const projectList = document.createElement('div');
+  projectList.setAttribute('id','project-list');
+
   projectNav.appendChild(projectsTitle);
   projectNav.appendChild(addProjects);
+  createProjForm(projectNav);
+  projectNav.appendChild(projectList);
 
   nav.appendChild(mainNav);
   nav.appendChild(projectNav);
+}
 
-  createProjForm();
+function displayDefaultTask(navElement, mainContent) {
+  
+}
+
+function displayProject(navElement, mainContent) {
+  
 }
 
 function displayTasks(navElement) {
   prevTaskNav.classList.remove('active');
   navElement.classList.add('active');
   prevTaskNav = navElement;
+
+  const mainContent = document.getElementById('main-content');
+  mainContent.textContent = '';
+
+  const title = document.createElement('h1');
+  title.setAttribute('id', 'main-title');
+  title.textContent = navElement.textContent;
+  
+  if (navElement.getAttribute('id') === 'inbox' || navElement.classList.contains('project')) {
+    const addTaskBtn = document.createElement('button');
+    if (navElement.classList.contains('project')) addTaskBtn.setAttribute('id', 'add-task-project');
+    else addTaskBtn.setAttribute('id', 'add-task-default');
+    addTaskBtn.textContent = 'Add Task +';
+    title.appendChild(addTaskBtn);  
+  }
+
+  mainContent.appendChild(title);
+
+  if (navElement.classList.contains('default-task')) {
+    displayDefaultTask(navElement, mainContent);
+  }
+  else if (navElement.classList.contains('project')) {
+    displayProject(navElement, mainContent);
+  }
 }
 
 function addProject() {
@@ -96,14 +155,14 @@ function addProject() {
 }
 
 function addNavListeners(nav) {
-  const tabs = nav.querySelectorAll('button');
+  const tabs = nav.querySelectorAll('button.task-nav');
   tabs.forEach(tab => {
-    tab.addEventListener('click', e => {
-      if (e.target.classList.contains('default-task')) {
-        displayTasks(e.target);
-      }
-      else if (e.target.id === 'add-proj') {
+    tab.addEventListener('click', (e) => {
+      if (e.target.id === 'add-proj') {
         addProject();
+      }
+      else {
+        displayTasks(e.target);
       }
     });
   });
