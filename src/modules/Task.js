@@ -3,7 +3,8 @@ export default class Task {
   #dueDate;
   constructor(name, dueDate) {
     this.#name = name;
-    this.#dueDate = dueDate;
+    dueDate.replace('/','-');
+    this.#dueDate = new Date(dueDate);
   }
 
   set name(name) {
@@ -12,5 +13,9 @@ export default class Task {
 
   get name() {
     return this.#name;
+  }
+
+  get date() {
+    return this.#dueDate;
   }
 }

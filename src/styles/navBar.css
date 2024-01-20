@@ -32,14 +32,14 @@
   font-size: 1.1em;
 }
 
-#action-btns {
+.action-btns {
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 5%;
 }
 
-#action-btns button {
+.action-btns button {
   font-size: 1.2em;
   padding: 5px 15px;
   border: none;
@@ -48,20 +48,20 @@
   flex-grow: 1;
 }
 
-#action-btns button:hover {
+.action-btns button:hover {
   filter: saturate(0.6);
   cursor: pointer;
 }
 
-#action-btns button:active {
+.action-btns button:active {
   filter: saturate(0.1);
 }
 
-#action-btns #confirm {
+.action-btns .confirm {
   background-color: aquamarine;
 }
 
-#action-btns #cancel {
+.action-btns .cancel {
   background-color: rgb(239, 120, 143);
 }
 

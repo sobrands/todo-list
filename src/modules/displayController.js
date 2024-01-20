@@ -36,9 +36,9 @@ function createProjForm(projNav) {
   inputContainer.setAttribute('id', 'name-input');
   nameInput.setAttribute('id', 'name');
 
-  btnContainer.setAttribute('id', 'action-btns');
-  confirmBtn.setAttribute('id', 'confirm');
-  cancelBtn.setAttribute('id', 'cancel');
+  btnContainer.classList.add('action-btns');
+  confirmBtn.classList.add('confirm');
+  cancelBtn.classList.add('cancel');
 
   confirmBtn.textContent = 'Enter';
   cancelBtn.textContent = 'Cancel';
@@ -53,7 +53,7 @@ function createProjForm(projNav) {
   btns.forEach(btn => {
     btn.addEventListener('click', e => {
       e.preventDefault();
-      if (e.target.id === 'confirm' && nameInput.value !== '') {
+      if (e.target.classList.contains('confirm') && nameInput.value !== '') {
         toDoList.addProj(nameInput.value);
         refreshProjectNav();
       }
@@ -108,12 +108,152 @@ function createNavBar(nav) {
   nav.appendChild(projectNav);
 }
 
-function displayDefaultTask(navElement, mainContent) {
+function generateInput(form, inputLabel, type) {
+  const inputCtn = document.createElement('div');
+  const input = document.createElement('input');
+  const label = document.createElement('label');
+  const error = document.createElement('p');
   
+  const inputId = inputLabel.toLowerCase().replace(' ', '-');
+  label.setAttribute('for', inputId);
+  label.textContent = `${inputLabel}: `;
+
+  input.setAttribute('type', type);
+  input.setAttribute('name', inputId);
+  input.setAttribute('id', inputId);
+  input.addEventListener('focus', () => {
+    error.textContent = '';
+  });
+
+  error.setAttribute('id', `user-${inputId}-error`);
+  
+  inputCtn.classList.add('input-container');
+
+  inputCtn.appendChild(label);
+  inputCtn.appendChild(input);
+  inputCtn.appendChild(error);
+  form.appendChild(inputCtn);
+}
+
+function validateForm(form, id) {
+  // Validate name input
+  if (form.name.value === '' || form.name.value=== null) {
+    const error = document.getElementById('user-name-error');
+    error.textContent = "Field must not be empty!";
+    return false;
+  }
+
+  // Validate date input
+  if (form.date.value === '' || form.date.value=== null) {
+    const error = document.getElementById('user-date-error');
+    error.textContent = "Field must not be empty!";
+    return false;
+  }
+
+  // Validate project input
+  if (id === 'add-task-default') {
+    if (form.project.value === '' || form.project.value=== null) {
+      const error = document.getElementById('user-project-error');
+      error.textContent = "Field must not be empty!";
+      return false;
+    }
+  }
+
+  return true;
+}
+
+function addTaskDialog(id, project) {
+  const dialog = document.createElement('dialog');
+  const taskForm = document.createElement('form');
+  taskForm.setAttribute('method', 'dialog');
+
+  generateInput(taskForm, 'Name', 'text');
+  generateInput(taskForm, 'Date', 'date');
+  if (id === 'add-task-default') generateInput(taskForm, 'Project', 'text');
+
+  const btnCtn = document.createElement('div');
+  const confirmBtn = document.createElement('button');
+  const cancelBtn = document.createElement('button');
+
+  confirmBtn.classList.add('confirm');
+  confirmBtn.textContent = 'Confirm';
+
+  cancelBtn.classList.add('cancel');
+  cancelBtn.textContent = 'Cancel';
+
+  btnCtn.classList.add('action-btns');
+  btnCtn.appendChild(confirmBtn);
+  btnCtn.appendChild(cancelBtn);
+
+  taskForm.setAttribute('id', 'task-form');
+
+  taskForm.appendChild(btnCtn);
+  dialog.appendChild(taskForm);
+  document.body.appendChild(dialog);
+
+  const btns = btnCtn.querySelectorAll('button');
+  btns.forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.preventDefault();
+      if (e.target.classList.contains('confirm')) {
+        if (validateForm(taskForm, id)) {
+          if(toDoList.addTaskToProject(taskForm, project)) {
+            dialog.close();
+            dialog.remove();
+          }
+        }
+      }
+      else {
+        dialog.close();
+        dialog.remove();
+      }
+      displayTasks(prevTaskNav);
+    })
+  })
+  
+  dialog.showModal();
+}
+
+function addTask(content, task, project = false) {
+  const taskCtn = document.createElement('div');
+  const taskName = document.createElement('p');
+
+  taskCtn.classList.add('task');
+
+  taskName.textContent = task.name;
+
+  taskCtn.appendChild(taskName);
+
+  if (project) {
+    const delBtn = document.createElement('button');
+    delBtn.textContent = 'x';
+    delBtn.setAttribute('id', 'task-delete');
+    taskCtn.appendChild(delBtn);
+  }
+  
+  content.appendChild(taskCtn);
+}
+
+function showTasks(mainContent, tasks, project = false) {
+  const content = mainContent.querySelector('#main-body');
+
+  for (const task of tasks) addTask(content, task, project);
+}
+
+function displayDefaultTask(navElement, mainContent) {
+  let tasks = [];
+  if (navElement.textContent === 'Inbox') tasks = toDoList.displayAllTasks();
+  else if (navElement.textContent === 'Today') tasks = toDoList.displayTodayTasks();
+  else if (navElement.textContent === 'This Week') tasks = toDoList.displayWeekTasks();
+
+  showTasks(mainContent, tasks);
 }
 
 function displayProject(navElement, mainContent) {
-  
+  const project = navElement.textContent;
+  const tasks = toDoList.getTasksFromProject(project);
+
+  showTasks(mainContent, tasks, true);
 }
 
 function displayTasks(navElement) {
@@ -127,16 +267,24 @@ function displayTasks(navElement) {
   const title = document.createElement('h1');
   title.setAttribute('id', 'main-title');
   title.textContent = navElement.textContent;
+
+  const contentBody = document.createElement('div');
+  contentBody.setAttribute('id', 'main-body');
   
   if (navElement.getAttribute('id') === 'inbox' || navElement.classList.contains('project')) {
     const addTaskBtn = document.createElement('button');
     if (navElement.classList.contains('project')) addTaskBtn.setAttribute('id', 'add-task-project');
     else addTaskBtn.setAttribute('id', 'add-task-default');
     addTaskBtn.textContent = 'Add Task +';
+    addTaskBtn.classList.add('add-task');
+    addTaskBtn.addEventListener('click', (e) => {
+      addTaskDialog(e.target.id, navElement);
+    })
     title.appendChild(addTaskBtn);  
   }
 
   mainContent.appendChild(title);
+  mainContent.appendChild(contentBody);
 
   if (navElement.classList.contains('default-task')) {
     displayDefaultTask(navElement, mainContent);
