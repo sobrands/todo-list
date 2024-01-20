@@ -1,21 +1,11 @@
 export default class Task {
-  #name;
-  #dueDate;
   constructor(name, dueDate) {
-    this.#name = name;
-    dueDate.replace('/','-');
-    this.#dueDate = new Date(dueDate);
-  }
-
-  set name(name) {
-    this.#name = name;
-  }
-
-  get name() {
-    return this.#name;
+    this.name = name;
+    this.dueDate = dueDate;
   }
 
   get date() {
-    return this.#dueDate;
+    this.dueDate.replace('/','-');
+    return new Date(this.dueDate);
   }
 }

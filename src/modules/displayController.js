@@ -1,10 +1,11 @@
 import ToDoList from './TodoList';
+import Storage from './Storage';
 
 const navHeadings = ['Inbox', 'Today', 'This Week'];
 const navIds = ['inbox', 'today', 'this-week'];
 let prevTaskNav;
-const toDoList = new ToDoList();
-
+const toDoList = Storage.getToDoList();
+Storage.saveToDoList(toDoList);
 
 function refreshProjectNav() {
   const projList = document.getElementById('project-list');
@@ -55,6 +56,7 @@ function createProjForm(projNav) {
       e.preventDefault();
       if (e.target.classList.contains('confirm') && nameInput.value !== '') {
         toDoList.addProj(nameInput.value);
+        Storage.saveToDoList(toDoList);
         refreshProjectNav();
       }
       projForm.style.display = 'none';
@@ -198,6 +200,7 @@ function addTaskDialog(id, project) {
       if (e.target.classList.contains('confirm')) {
         if (validateForm(taskForm, id)) {
           if(toDoList.addTaskToProject(taskForm, project)) {
+            Storage.saveToDoList(toDoList);
             dialog.close();
             dialog.remove();
           }
@@ -230,7 +233,7 @@ function addTask(content, task, project = false) {
     delBtn.setAttribute('id', 'task-delete');
     taskCtn.appendChild(delBtn);
   }
-  
+
   content.appendChild(taskCtn);
 }
 
@@ -339,6 +342,7 @@ function initialPage() {
   body.appendChild(contentBody);
 
   createNavBar(nav);
+  refreshProjectNav();
   const inbox = document.querySelector('#inbox');
   prevTaskNav = inbox;
   displayTasks(inbox);
